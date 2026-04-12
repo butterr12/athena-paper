@@ -1,0 +1,169 @@
+% ------------------------------------------------------------------------
+% CS198 Final Paper
+% Project Title: <insert title>
+% Authors: < your names >
+% Date Submitted: May 17, 2018
+%
+% ------------------------------------------------------------------------
+\documentclass[letterpaper,12pt]{report}
+\usepackage[centertags]{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{newlfont}
+\usepackage{epsfig}
+
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{
+   colorlinks=false,
+   urlcolor=black,    % color of external links
+   linkcolor=black,  % color of toc, list of figs etc.
+   citecolor=black,   % color of links to bibliography
+}
+
+\usepackage{UPCS198} %UP Dept. of Computer Science CS198 Style
+\usepackage{UPCSINC1}
+\usepackage[active]{LTX}
+
+\makeatletter
+\def\@xfloat#1[#2]{\ifhmode \@bsphack\@floatpenalty -\@Mii\else
+   \@floatpenalty-\@Miii\fi\def\@captype{#1}\ifinner
+      \@parmoderr\@floatpenalty\z@
+    \else\@next\@currbox\@freelist{\@tempcnta\csname ftype@#1\endcsname
+       \multiply\@tempcnta\@xxxii\advance\@tempcnta\sixt@@n
+       \@tfor \@tempa :=#2\do
+			{\if\@tempa h\advance\@tempcnta \@ne\fi
+			 \if\@tempa t\advance\@tempcnta \tw@\fi
+			 \if\@tempa b\advance\@tempcnta 4\relax\fi
+			 \if\@tempa p\advance\@tempcnta 8\relax\fi
+	 }\global\count\@currbox\@tempcnta}\@fltovf\fi
+    \global\setbox\@currbox\color@vbox\normalcolor\vbox\bgroup
+    \def\baselinestretch{1}\@normalsize
+    \boxmaxdepth\z@
+    \hsize\columnwidth \@parboxrestore}
+\makeatother
+
+\hfuzz2pt
+\newlength{\defbaselineskip}
+\setlength{\defbaselineskip}{\baselineskip}
+\newcommand{\setlinespacing}[1]
+           {\setlength{\baselineskip}{#1 \defbaselineskip}}
+\newcommand{\doublespacing}{\setlength{\baselineskip}
+                           {2.0 \defbaselineskip}}
+\newcommand{\singlespacing}{\setlength{\baselineskip}{\defbaselineskip}}
+% MATH -------------------------------------------------------------------
+\newcommand{\A}{{\cal A}}
+\newcommand{\h}{{\cal H}}
+\newcommand{\s}{{\cal S}}
+\newcommand{\W}{{\cal W}}
+\newcommand{\BH}{\mathbf B(\cal H)}
+\newcommand{\KH}{\cal  K(\cal H)}
+\newcommand{\Real}{\mathbb R}
+\newcommand{\Complex}{\mathbb C}
+\newcommand{\Field}{\mathbb F}
+\newcommand{\RPlus}{[0,\infty)}
+\newcommand{\norm}[1]{\left\Vert#1\right\Vert}
+\newcommand{\essnorm}[1]{\norm{#1}_{\text{\rm\normalshape ess}}}
+\newcommand{\abs}[1]{\left\vert#1\right\vert}
+\newcommand{\set}[1]{\left\{#1\right\}}
+\newcommand{\seq}[1]{\left<#1\right>}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\To}{\longrightarrow}
+\newcommand{\RE}{\operatorname{Re}}
+\newcommand{\IM}{\operatorname{Im}}
+\newcommand{\Poly}{{\cal{P}}(E)}
+\newcommand{\EssD}{{\cal{D}}}
+% THEOREMS ---------------------------------------------------------------
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[section]
+\theoremstyle{remark}
+\newtheorem{rem}{Remark}[section]
+\numberwithin{equation}{section}
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\setlength{\tclineskip}{1.05\baselineskip}
+
+
+\begin{document}
+
+%\nobib
+%\draft
+%\nofront
+
+\permissionfalse
+
+
+\submityear{April 2026}
+
+% ------------------------------------------------------------------------
+\title{ATHENA: An Image Captioning Pipeline for Constrained Underwater Environments}
+
+
+\cs198 
+\author{Rodrigo Emmanuel D. Roy \\
+        Krisha Anne E. Chan
+}
+
+\newcommand\authorline{Rodrigo Emmanuel D. Roy and Krisha Anne E. Chan}
+
+\degreeinitial{BS Computer Science} % put here your previous degree
+\major{Computer Science}
+\adviser{Prof. Prospero C. Naval, Jr., Ph.D.}
+% \adviser{Asst. Prof. Carlo R. Raquel}
+% \adviser{Asst. Prof. Roselyn S. Gabud}
+% \adviser{Asst. Prof. Paul Rossener R. Regonia, D.Sc.}
+\secondreader{Asst. Prof. Carlo R. Raquel} % uncomment for two advisers
+% \dean{Dean Maria Antonia N. Tanchuling, Ph.D.}
+
+% ------------------------------------------------------------------------
+{
+\forgeterr{?0000} % Don't bother with over/under-full boxes
+\beforepreface
+\forgeterr{?1111} % Process All Errors from Here on
+}
+% ------------------------------------------------------------------------
+{
+\typeout{Abstract}
+\include{abstract}
+}
+% ------------------------------------------------------------------------
+{
+\typeout{Acknowledgements}
+\include{acknowl}
+}
+% ------------------------------------------------------------------------
+\afterpreface
+\def\baselinestretch{1}
+\setlinespacing{1.66}
+% ------------------------------------------------------------------------
+{
+%\typeout{Introduction}
+%\include{introd}
+}
+% ------------------------------------------------------------------------
+\setlinespacing{1.66}
+% ------------------------------------------------------------------------
+
+\include{chapter1}
+\include{chapter2}
+\include{chapter3}
+\include{chapter4}
+\include{chapter5}
+
+\include{appendix}
+
+% ------------------------------------------------------------------------
+%\INPUT{thesis.bib}
+
+\setlinespacing{1.44}
+% \bibliographystyle{unsrt}
+\bibliographystyle{IEEEtran}
+\bibliography{biblio}
+
+\end{document}

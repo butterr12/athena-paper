@@ -1,0 +1,88 @@
+% ------------------------------------------------------------------------
+% CS198 Thesis Users' Manual
+% Project Title: SID Users's Manual
+% Authors: Annliza Nina dL. Andrada
+%          Diane Felice N. Lerma
+%          Christine Pamela dG. Obedencio
+%          Rochelle S. Ticlao
+% Date Submitted: March 24, 2000
+%
+% ------------------------------------------------------------------------
+\documentclass[letterpaper,12pt]{report}
+\usepackage[centertags]{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{newlfont}
+\usepackage{epsfig}
+\usepackage{UPCS198man} %UP Dept. of Computer Science CS198 Style
+\usepackage{UPCSINC1}
+\usepackage[active]{LTX}
+\hfuzz2pt
+\newlength{\defbaselineskip}
+\setlength{\defbaselineskip}{\baselineskip}
+\newcommand{\setlinespacing}[1]
+           {\setlength{\baselineskip}{#1 \defbaselineskip}}
+\newcommand{\doublespacing}{\setlength{\baselineskip}
+                           {2.0 \defbaselineskip}}
+\newcommand{\singlespacing}{\setlength{\baselineskip}{\defbaselineskip}}
+
+\begin{document}
+
+\nobib
+%\draft
+
+
+\permissionfalse
+
+\nolistoftables
+\nolistoffigures
+\submityear{March 2003}
+
+
+% ------------------------------------------------------------------------
+\title{Speaker Identification \\ using Multi-Layer Perceptron
+Neural Networks}
+
+
+\author{Annliza Nina dL. Andrada \\
+        Diane Felice N. Lerma \\
+        Christine Pamela dG. Obedencio \\
+        Rochelle S. Ticlao
+}
+
+% ------------------------------------------------------------------------
+{
+\forgeterr{?0000} % Don't bother with over/under-full boxes
+\beforepreface
+\forgeterr{?1111} % Process All Errors from Here on
+}
+% ------------------------------------------------------------------------
+%{ \typeout{Acknowledgements}
+%\include{acknowl}
+%}
+% ------------------------------------------------------------------------
+\afterpreface
+%\def\baselinestretch{1}
+%\setlinespacing{1.66}
+% ------------------------------------------------------------------------
+%{
+%\typeout{Introduction}
+%\include{introd}
+%}
+% ------------------------------------------------------------------------
+\setlinespacing{1.66}
+% ------------------------------------------------------------------------
+
+\include{uchapter1}
+%\include{chapter2}
+%\include{chapter3}
+%\include{chapter4}
+%\include{chapter5}
+%\include{chapter6}
+
+%\include{appendix}
+
+% ------------------------------------------------------------------------
+
+\end{document}

@@ -1,0 +1,148 @@
+\chapter{Installing Matlab}
+    Run setup on your computer and install matlab at your root
+    directory or C.
+    After installing, copy the SID folder into your C$\: \backslash$Matlab$\backslash$work
+    directory.
+    Run matlab.
+    Open the path browser and add the path C$\: \backslash$Matlab$\backslash$work$\backslash$SID.
+    Save.
+
+\chapter{Starting the program}
+
+    Open Splash0.
+    Run Splash0 to display the program's splash screen
+
+    \begin{figure}[h]
+    \begin{center}
+    \epsfig{height=4in,file=../figures/splash_fig.eps} \caption{\label{splash_fig}}
+    \end{center}
+    \end{figure}
+
+    Upon clicking the OK button (note: all buttons are clickable only by
+    mouse), the main menu will be displayed on the screen
+
+    \begin{figure}[h]
+    \begin{center}
+    \epsfig{height=4in,file=../figures/mainmenu_fig.eps} \caption{\label{mainmenu_fig}}
+    \end{center}
+    \end{figure}
+
+    (see Fig. \ref{mainmenu_fig}.)
+
+\chapter{Choosing Options}
+
+\subsection{Training}
+    Upon clicking the button Train, the training parameters are
+    immediately asked from the user. These parameters include the
+    number of speakers to be enrolled (numenrollees), number of
+    words to be uttered (numwords) and the number of samples per
+    word (numsamples). If the database already exists, the values
+    of numwords and numsamples will be automatically displayed on
+    screen after getting the value of numenrollees since these are
+    fixed. If the database does not exist, all three parameters will be
+    asked from the user.
+
+    \begin{figure}[h]
+    \begin{center}
+    \epsfig{height=4in,file=../figures/trainpar_fig.eps} \caption{\label{trainpar_fig}}
+    \end{center}
+    \end{figure}
+
+    (see Fig. \ref{trainpar_fig}.)
+
+    But if there is an existing database already:
+
+    \begin{figure}[h]
+    \begin{center}
+    \epsfig{height=4in,file=../figures/trainpar_exist_fig.eps} \caption{\label{trainpar_exist_fig}}
+    \end{center}
+    \end{figure}
+
+    (see Fig. \ref{trainpar_exist_fig}.)
+
+      After getting these parameters, the user is asked to enter the
+    names and login names of the enrollees, until it reaches the value
+    specified in numenrollees.
+
+    \begin{figure}[h]
+    \begin{center}
+    \epsfig{height=4in,file=../figures/name_fig.eps} \caption{\label{name_fig}}
+    \end{center}
+    \end{figure}
+
+    (see Fig. \ref{name_fig}.)
+
+    Then the user will be asked to enter the
+    words to be uttered (same number as specified in numwords).
+
+    \begin{figure}[h]
+    \begin{center}
+    \epsfig{height=4in,file=../figures/word_fig.eps} \caption{\label{word_fig}}
+    \end{center}
+    \end{figure}
+
+    (see Fig. \ref{word_fig}.)
+
+    After obtaining all of the specified information, a reminder
+    will be displayed on screen showing all the words that you
+    entered and the specifications of how and where to save your
+    voice samples.
+
+    \begin{figure}[h]
+    \begin{center}
+    \epsfig{height=4in,file=../figures/noteword_fig.eps} \caption{\label{noteword_fig}}
+    \end{center}
+    \end{figure}
+
+    (see Fig. \ref{noteword_fig}.)
+
+    Pressing OK, will make the program start training. It will be a long
+    wait. For example, it will take this program about 12 hours to
+    train 4 persons with 5 words of 20 samples each. After the
+    training is done, a note will be displayed on screen
+    indicating that the training is already completed.
+
+    \begin{figure}[h]
+    \begin{center}
+    \epsfig{height=4in,file=../figures/succtrain_fig.eps} \caption{\label{succtrain_fig}}
+    \end{center}
+    \end{figure}
+
+    (see Fig. \ref{succtrain_fig}.)
+
+       Clicking OK will bring you back to the main menu.
+
+\subsection{Testing}
+Upon clicking the button Test, the WAV files for every
+    utterance of each word should be made inputs by opening the files
+    from the path C$\: \backslash$Matlab$\backslash$work$\backslash$
+    SID$\backslash$Data$\backslash$testing$\_$samples.
+
+If the testing is successful, the persons identity will be
+    displayed on the screen
+
+    \begin{figure}[h]
+    \begin{center}
+    \epsfig{height=4in,file=../figures/ident_fig.eps} \caption{\label{ident_fig}}
+    \end{center}
+    \end{figure}
+
+    (see Fig. \ref{ident_fig}.)
+
+If the person is deemed not a match among the voice samples in
+    our database, then it will be displayed so in the
+    screen.
+
+\begin{figure}[h]
+    \begin{center}
+    \epsfig{height=4in,file=../figures/identnot_fig.eps} \caption{\label{identnot_fig}}
+    \end{center}
+    \end{figure}
+
+    (see Fig. \ref{identnot_fig}.)
+
+    Clicking OK will bring you back to the main menu.
+
+\subsection{Exiting the program}
+    Upon clicking Exit, all files will be closed including the
+    whole Matlab environment.

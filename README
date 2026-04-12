@@ -1,0 +1,45 @@
+On the command line type
+
+> make biblio
+
+the first time you compile thesis.tex and every time you modify
+biblio.bib.
+
+When you make changes to any of the *.tex files you will have to
+update the *.dvi file:
+
+> make thesis
+
+To view your document, use xdvi
+
+> xdvi thesis
+
+or ghostview
+
+> ghostview thesis.ps
+
+
+Do the same for the User's Manual and for the Technical Report:
+
+> make users
+> xdvi users
+
+> make techrep
+> xdvi techrep
+
+To generate pdf the files type for all
+
+> make psandpdf 
+
+
+IMPORTANT !!!!
+Before submitting your latex files to your Adviser type
+
+> make real-clean
+
+This will remove all auxilliary files created by Latex.
+
+
+
+Pros Naval
+January 5, 2003
