@@ -1,9 +1,10 @@
 \chapter{Methodology} \label{sec:matsmethods}
-This chapter describes the data, methodology, and experimental setup used to develop and evaluate ATHENA. We first present the underwater image captioning dataset used for training and evaluation. We then describe the overall system architecture, including the image enhancement pipeline and VLM backbones. Finally, we detail the ablation study design, fine-tuning configurations, and evaluation metrics used to assess model performance.
+This chapter describes the data, methodology, and experimental setup used to develop and evaluate ATHENA. We first present the underwater image captioning datasets used for training and evaluation. We then describe the overall system architecture, including the image enhancement pipeline and VLM backbones. Finally, we detail the ablation study design, fine-tuning configurations, and evaluation metrics used to assess model performance.
 
 \section{Data}
+\subsection*{Underwater Image Captioning Dataset(Huanyu et al.)}
 
-For our study, we use a publicly available underwater image captioning dataset collected by Huanyu et. al \cite{mainref}, which consists of 3,176 high-quality underwater images. We selected this dataset because it is the most comprehensive publicly available underwater dataset with multiple human-written captions per image. Other popular underwater datasets, such as UIEB \cite{uieb}, SQUID \cite{squid}, UID2021 \cite{uid}, URPC2021 \cite{urpc}, and DUO \cite{duo}, either lack captions, focus solely on object detection, or are much smaller in scale.
+For our study, we first use a publicly available underwater image captioning dataset collected by Huanyu et al. \cite{mainref}, which consists of 3,176 high-quality underwater images. We selected this dataset because it is the most comprehensive publicly available underwater dataset with multiple human-written captions per image. Other popular underwater datasets, such as UIEB \cite{uieb}, SQUID \cite{squid}, UID2021 \cite{uid}, URPC2021 \cite{urpc}, and DUO \cite{duo}, either lack captions, focus solely on object detection, or are much smaller in scale.
 
 The images cover a wide range of resolutions and were resized to 224 × 224 pixels for consistency and ease of use. The dataset includes diverse underwater scenes, such as small distant targets, dense groups, visual blur, and low-light conditions, representing real-world underwater environments. The dataset also spans ten categories, predominantly fish (1861), coral reefs (1587), and divers (850).
 
@@ -11,7 +12,7 @@ Each image is annotated with five distinct captions provided by volunteers with 
 
 \begin{table}[htbp]
 \centering
-\caption{Sample images and captions from the dataset~\cite{mainref}}
+\caption{Sample images and captions from the Huanyu et al. dataset~\cite{mainref}}
 \label{tab:examples} 
 \begin{tabular}{>{\centering\arraybackslash}m{0.35\textwidth} m{0.55\textwidth}}
 \toprule
@@ -34,10 +35,33 @@ GT-5: A gray dolphin swims at the bottom of sea. \\
 \end{tabular}
 \end{table}
 
+\subsection*{UWBench Dataset}
+To supplement our evaluation with a broader and more challenging set for image captioning, we also incorporate UWBench \cite{UWBench}, a recently released benchmark specifically designed for underwater vision-language understanding. UWBench is composed of 15,003 high-resolution underwater images captured across diverse aquatic environments, such as oceans, coral reefs, and deep-sea habitats. Each image is captioned by human-verified annotations. The dataset captures rich variation in visibility, lighting conditions, and water turbidity, which provides a realistic testbed for model evaluation.
+
+UWBench was constructed through a pipeline combining multi-source image acquisition, systematic attribute extraction, and GPT-assisted annotation quality. UWBench also offers a much larger image pool and more complex scenes, including images with poor visibility. Although the dataset also includes object referring and visual question answering tasks, we focus on the image captioning subset for our training and evaluation. Together, the two datasets allow us to assess ATHENA on both fine-grained and large-scale underwater captioning tasks.
+
+\begin{table}[htbp]
+\centering
+\caption{Sample images and captions from the UWBench dataset~\cite{UWBench}}
+\label{tab:examplesUW} 
+\begin{tabular}{>{\centering\arraybackslash}m{0.35\textwidth} m{0.55\textwidth}}
+\toprule
+\textbf{Image} & \textbf{Ground truth caption} \\
+\midrule
+\includegraphics[width=0.33\textwidth]{figures/MantaRay0050095.jpeg} & 
+GT: A blue-tinted underwater scene shows a rocky seabed with uneven reef structures and scattered hard surfaces. In the middle of the frame, a single large mantaray forms a dark, diamond-shaped silhouette against the lighter bottom. The wings extend broadly left and right, with the body covering much of the lower half of the image. Water clarity appears moderate, giving the scene a slightly hazy look. \\
+\midrule
+\includegraphics[width=0.33\textwidth]{figures/SubmarinePipeline1570016.png} & 
+GT: An underwater view shows a sandy seabed under somewhat turbid, blue water. A single large submarine pipeline runs diagonally from the upper-left toward the center, occupying much of the upper half of the frame with a smooth, cylindrical appearance. The surrounding seafloor appears flat and fine-grained, with no obvious coral or rocks. Overall, the scene is a sandy bottom dominated by one prominent pipeline. \\
+
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Methodology}
 
 \subsection*{System Architecture}
-The ATHENA pipeline begins with image capture, sending the raw image and a system prompt as input. The image first passes through a multi-step enhancement pipeline, after which the enhanced image is fed into the VLM, which generates a structured textual description. Optional modules such as segmentation and retrieval-augmented grounding (RAG) can be integrated to mitigate hallucinations. The output text is then transmitted over a low-bandwidth acoustic channel to a remote operator. The overall architecture is illustrated in Figure~\ref{fig:athena_archi}.
+The ATHENA pipeline begins with image capture, sending the raw image and a system prompt as input. The image first passes through a multi-step enhancement pipeline, after which the enhanced image is fed into the VLM, which generates a structured textual description. Optional modules such as segmentation and retrieval-augmented grounding (RAG) may be integrated in the future to mitigate hallucinations. The output text is then transmitted over a low-bandwidth acoustic channel to a remote operator. The overall architecture is illustrated in Figure~\ref{fig:athena_archi}.
 
 \begin{figure}[h!]
     \centering
