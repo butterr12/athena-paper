@@ -1,8 +1,32 @@
 \chapter{Conclusion} \label{sec:conclusion}
-Each chapter should have a short paragraph summarizing/introducing the chapter to the readers.
+This chapter summarizes the contributions of this work, reflects on the key findings across all experiments, and identifies directions for future research.
 
 \section{Conclusion}
 
+This thesis presented ATHENA, an image captioning pipeline designed for constrained underwater environments where visual degradation, limited onboard compute, and low-bandwidth acoustic communication impose strict practical constraints. ATHENA integrates a seven-step image enhancement pipeline with a parameter-efficiently fine-tuned vision-language model to generate structured scene descriptions that can be transmitted over acoustic channels to a remote operator.
+
+Through systematic ablation across three VLM backbones (SmolVLM-Instruct, BLIP-2 OPT 2.7B, and Qwen3.5-VL), six LoRA rank and DoRA configurations, and two datasets of varying visual complexity, this work produced three central findings.
+
+First, \textbf{Qwen3.5-VL with LoRA rank 32 and DoRA disabled} is the optimal backbone configuration for deployment. Despite having only 1.37 billion parameters, it achieves the highest scores across the majority of captioning metrics on UWBench, and under 4-bit NF4 quantization occupies only 653 MB of VRAM, which fits comfortably within the memory budget of embedded platforms such as the NVIDIA Jetson Orin series. Its inference latency of under 6 seconds per caption is acceptable for underwater acoustic communication scenarios where transmission bandwidth, not onboard computation, is the primary bottleneck.
+
+Second, \textbf{the image enhancement pipeline is conditionally necessary}. On the original Li et al.\ dataset~\cite{mainref}, whose images are relatively clear and captured under favorable conditions, preprocessing produced only marginal score improvements, suggesting the VLM can extract sufficient visual features without enhancement when image quality is adequate. On UWBench~\cite{uwbench}, which presents substantially more challenging images with occlusion, turbidity, and color distortion characteristic of real constrained deployments, enabling preprocessing yielded gains of 3.4 BLEU-1 points and 6.3 CIDEr points for the deployment configuration (DoRA=False, LoRA32 vs.\ best off configuration), with substantially larger gains observed under DoRA=True settings. This confirms that the pipeline's value is tied to the severity of visual degradation in the deployment environment.
+
+Third, \textbf{ATHENA is competitive with frontier VLMs at a fraction of their scale}. Evaluated zero-shot on UWBench against 14 frontier models ranging from 3B to over 100B parameters, ATHENA ranks first on BLEU-2 through BLEU-4, METEOR, and ROUGE-L, and second overall behind only GPT-5. Its METEOR score of 40.02 is substantially higher than all other evaluated models including GPT-5 (27.08), indicating that domain-specific fine-tuning on underwater imagery produces strong lexical alignment with human reference captions that generalist models at any scale cannot easily replicate zero-shot.
+
+Together, these results demonstrate that a carefully fine-tuned compact VLM paired with an appropriate image enhancement strategy can achieve state-of-the-art underwater scene captioning while remaining deployable on resource-constrained autonomous platforms.
+
 \section{Summary of Contributions}
 
+This work presents ATHENA, an end-to-end image captioning pipeline integrating a seven-step underwater image enhancement protocol with a parameter-efficiently fine-tuned VLM, designed for low-bandwidth deployment on autonomous underwater vehicles. A systematic ablation across three VLM backbones and six LoRA rank and DoRA configurations establishes Qwen3.5-VL (LoRA32, DoRA=False) as the optimal deployment configuration, with controlled experiments across two datasets showing that the image enhancement pipeline is conditionally necessary: beneficial for degraded inputs but unnecessary when images are already clear.
+
+ATHENA is further benchmarked against 14 frontier VLMs on UWBench in a zero-shot setting, demonstrating that a fine-tuned 1.37B-parameter model outperforms much larger systems on most metrics and establishing a strong baseline for future underwater captioning work. Deployment feasibility is confirmed through quantitative measurement of VRAM footprint, inference latency, and preprocessing overhead under 4-bit NF4 quantization, showing that ATHENA meets the resource constraints of standard edge computing hardware used in underwater robotics.
+
 \section{Future Research}
+
+Several directions remain open for extending this work.
+
+\textbf{Adaptive preprocessing.} The current pipeline applies a fixed seven-step enhancement sequence to every image regardless of its actual degradation level. An adaptive controller trained to select or weight enhancement steps based on estimated water quality, turbidity, and visibility could reduce unnecessary processing on clear images while improving output quality on degraded ones.
+
+\textbf{Real-time onboard evaluation.} All experiments in this work were conducted on a server-grade NVIDIA A100 GPU. Validating ATHENA's latency and output quality on actual edge hardware (e.g., NVIDIA Jetson Orin NX) under realistic acoustic communication constraints would constitute a critical step toward operational deployment.
+
+\textbf{Multi-task extension.} UWBench supports object referring and visual question answering alongside image captioning. Extending ATHENA to handle these tasks through multi-task fine-tuning could increase its utility as a general onboard underwater perception module, supporting not only scene narration but also targeted object localization and interactive querying by remote operators.

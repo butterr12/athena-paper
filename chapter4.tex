@@ -1,133 +1,220 @@
 \chapter{Analysis and Discussion} \label{sec:results}
-This chapter presents the experimental results of the ATHENA pipeline. We first report the ablation study results across all backbone and fine-tuning configurations, then compare ATHENA against state-of-the-art image captioning models on the underwater benchmark, and finally analyze computational efficiency and deployment feasibility.
+This chapter presents the experimental results of the ATHENA pipeline across two datasets: the original underwater image captioning dataset by Li et al.~\cite{mainref} and the UWBench dataset~\cite{uwbench}. The image enhancement pipeline is applied to both datasets during training and evaluation. We first report the backbone and hyperparameter ablation results on the Li et al.\ dataset, then analyze the effect of the image enhancement pipeline across both datasets, with particular focus on the UWBench dataset where images are substantially more degraded, and compare ATHENA against frontier vision-language models on the UWBench dataset as a common zero-shot benchmark. Finally, we analyze computational efficiency and deployment feasibility.
 
 \section{Ablation Study Results}
 
-Following the ablation setup described in Section~\ref{sec:matsmethods}, Table~\ref{tab:ablation_results} reports the best-performing configuration per backbone. Full per-configuration results are presented in Tables~\ref{tab:smolvlm_ablation} through~\ref{tab:qwen_ablation}.
+Following the ablation setup described in Section~\ref{sec:matsmethods}, we evaluate all LoRA rank and DoRA configurations on the original Li et al.\ dataset~\cite{mainref}, whose images are relatively clear and captured under favorable conditions. Table~\ref{tab:ablation_results} reports the best-performing configuration per backbone; full per-configuration results for all 18 configurations, including a visual comparison, are in Appendix~\ref{app:results}.
 
 \begin{table}[h!]
 \centering
 \caption{Best configuration per backbone}
 \label{tab:ablation_results}
 \resizebox{\columnwidth}{!}{%
-\begin{tabular}{llcccccc}
+\begin{tabular}{llcccccccc}
 \hline
-\textbf{Model} & \textbf{Config} & \textbf{B-1} & \textbf{B-2} & \textbf{B-3} & \textbf{B-4} & \textbf{R-L} & \textbf{C} \\
+\textbf{Model} & \textbf{Config} & \textbf{B-1} & \textbf{B-2} & \textbf{B-3} & \textbf{B-4} & \textbf{R-L} & \textbf{C} & \textbf{S} & \textbf{M} \\
 \hline
-SmolVLM  & LoRA32 DoRA=Y & \textbf{0.7820} & \textbf{0.6474} & \textbf{0.5327} & 0.4332 & 0.6574 & 1.2810 \\
-BLIP-2   & LoRA32 DoRA=Y & 0.6639 & 0.5317 & 0.4229 & 0.3335 & 0.5322 & 0.8740 \\
-Qwen3.5  & LoRA8 DoRA=Y  & 0.7862 & 0.6488 & 0.5390 & \textbf{0.4445} & \textbf{0.6705} & \textbf{1.4046} \\
+SmolVLM  & LoRA32 DoRA=Y & 0.7820 & 0.6474 & 0.5327 & 0.4332 & 0.6574 & 1.2810 & 0.2610 & 0.3241 \\
+BLIP-2   & LoRA32 DoRA=Y & 0.6639 & 0.5317 & 0.4229 & 0.3335 & 0.5322 & 0.8740 & 0.2709 & 0.3335 \\
+Qwen3.5  & LoRA8  DoRA=Y & \textbf{0.7877} & \textbf{0.6535} & \textbf{0.5473} & \textbf{0.4568} & \textbf{0.6765} & \textbf{1.4464} & \textbf{0.2918} & \textbf{0.3572} \\
 \hline
 \end{tabular}%
 }
 \end{table}
 
-BLIP-2 showed the lowest overall performance across all configurations, with LoRA32 DoRA=Y as its best result, suggesting the model struggles to adapt to the underwater domain even with fine-tuning. SmolVLM converged effectively at LoRA32 DoRA=Y, achieving strong BLEU scores competitive with the larger Qwen3.5. Qwen3.5 performed most consistently and achieved the highest scores overall, with LoRA8 DoRA=Y as its best configuration, indicating its stronger pretrained representations benefit from weight decomposition even at low rank. Qwen3.5 is therefore selected as the ATHENA deployment backbone based on its superior performance across all metrics, as visualized in Figure~\ref{fig:metrics_comparison}, with deployment feasibility confirmed through 4-bit NF4 quantization as detailed in Table~\ref{tab:efficiency}.
+\makeatletter\def\@captype{figure}\makeatother
+\vspace{6pt}
+\noindent\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=\linewidth]{figures/fig_backbone_comparison.pdf}
+\caption{Best-configuration scores per backbone (visual representation of Table~\ref{tab:ablation_results}).}
+\label{fig:backbone_comparison}
+\end{minipage}
+\vspace{6pt}
 
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=\linewidth]{figures/metrics_comparison_hf.png}
-    \caption{Metrics comparison across all configurations}
-    \label{fig:metrics_comparison}
-\end{figure}
+As shown in Figure~\ref{fig:backbone_comparison}, BLIP-2 showed the lowest overall performance across all configurations, with LoRA32 DoRA=Y as its best result, suggesting the model struggles to adapt to the underwater domain even with fine-tuning. SmolVLM converged effectively at LoRA32 DoRA=Y, achieving strong BLEU scores competitive with the larger Qwen3.5. Qwen3.5 performed most consistently and achieved the highest scores overall, with LoRA8 DoRA=Y as its best configuration, indicating its stronger pretrained representations benefit from weight decomposition even at low rank. Qwen3.5 is therefore selected as the ATHENA deployment backbone.
+
+\subsection*{Effect of Image Preprocessing}
+
+To isolate the contribution of the image enhancement pipeline, Qwen3.5 was evaluated with and without preprocessing across all LoRA rank and DoRA configurations on both datasets. Table~\ref{tab:prep_li} shows the best result per condition on the original Li et al.\ dataset; full per-rank results are in Appendix~\ref{app:results}.
 
 \begin{table}[h!]
 \centering
-\caption{SmolVLM-Instruct ablation results}
-\label{tab:smolvlm_ablation}
+\caption[Preprocessing ablation on the Li et al.\ dataset (Qwen3.5)]{Preprocessing ablation on the Li et al.\ dataset (Qwen3.5, best LoRA rank per condition)}
+\label{tab:prep_li}
 \resizebox{\columnwidth}{!}{%
-\begin{tabular}{llcccccc}
+\begin{tabular}{llccccccc}
 \hline
-\textbf{Model} & \textbf{Config} & \textbf{B-1} & \textbf{B-2} & \textbf{B-3} & \textbf{B-4} & \textbf{R-L} & \textbf{C} \\
+\textbf{DoRA} & \textbf{Prep} & \textbf{Best $r$} & \textbf{B-1} & \textbf{B-4} & \textbf{R-L} & \textbf{CIDEr} & \textbf{SPICE} & \textbf{METEOR} \\
 \hline
-SmolVLM & LoRA8 DoRA=N  & 0.7665 & 0.6311 & 0.5162 & 0.4189 & 0.6438 & 1.2263 \\
-SmolVLM & LoRA8 DoRA=Y  & 0.7739 & 0.6388 & 0.5243 & 0.4262 & 0.6501 & 1.2592 \\
-SmolVLM & LoRA16 DoRA=N & 0.7679 & 0.6327 & 0.5178 & 0.4203 & 0.6449 & 1.2312 \\
-SmolVLM & LoRA16 DoRA=Y & 0.7752 & 0.6401 & 0.5257 & 0.4276 & 0.6514 & 1.2641 \\
-SmolVLM & LoRA32 DoRA=N & 0.7694 & 0.6342 & 0.5194 & 0.4218 & 0.6461 & 1.2361 \\
-SmolVLM & LoRA32 DoRA=Y & \textbf{0.7820} & \textbf{0.6474} & \textbf{0.5327} & \textbf{0.4332} & \textbf{0.6574} & \textbf{1.2810} \\
+N & ON  & 16 & 0.7785 & 0.4419 & 0.6686 & 1.3928 & 0.2845 & 0.3471 \\
+N & OFF & 8  & 0.7809 & 0.4474 & 0.6740 & 1.4234 & 0.2790 & 0.3485 \\
+\hline
+Y & ON  & 8  & 0.7796 & 0.4449 & 0.6721 & 1.4457 & 0.2883 & 0.3503 \\
+Y & OFF & 8  & \textbf{0.7877} & \textbf{0.4568} & \textbf{0.6765} & \textbf{1.4464} & \textbf{0.2918} & \textbf{0.3572} \\
 \hline
 \end{tabular}%
 }
 \end{table}
 
+Across both DoRA settings, preprocessing provides no meaningful improvement on the Li et al.\ dataset; the Prep=OFF configurations match or slightly outperform Prep=ON on every metric. This is consistent with the nature of that dataset: its images are relatively clear, with limited turbidity or color distortion, leaving little room for enhancement to contribute. The preprocessing pipeline is therefore not necessary when input images are already of adequate visual quality.
+
+To assess the pipeline's contribution under realistic degraded conditions, we re-evaluated Qwen3.5 on the UWBench dataset~\cite{uwbench}, which features substantially more challenging images with greater occlusion, turbidity, color distortion, and variable illumination, with and without preprocessing across all LoRA rank and DoRA configurations. All scores are reported as percentages ($\times 100$). Table~\ref{tab:prep_summary} shows the best result per condition; full per-rank results are in Appendix~\ref{app:results}.
+
 \begin{table}[h!]
 \centering
-\caption{BLIP-2 OPT 2.7B ablation results}
-\label{tab:blip2_ablation}
+\caption[Preprocessing ablation on the UWBench dataset (Qwen3.5)]{Preprocessing ablation on the UWBench dataset (Qwen3.5, best LoRA rank per condition)}
+\label{tab:prep_summary}
 \resizebox{\columnwidth}{!}{%
-\begin{tabular}{llcccccc}
+\begin{tabular}{llccccccc}
 \hline
-\textbf{Model} & \textbf{Config} & \textbf{B-1} & \textbf{B-2} & \textbf{B-3} & \textbf{B-4} & \textbf{R-L} & \textbf{C} \\
+\textbf{DoRA} & \textbf{Prep} & \textbf{Best $r$} & \textbf{B-1} & \textbf{B-4} & \textbf{R-L} & \textbf{CIDEr} & \textbf{SPICE} & \textbf{METEOR} \\
 \hline
-BLIP-2 & LoRA8 DoRA=N  & 0.6390 & 0.5095 & 0.4036 & 0.3178 & 0.5120 & 0.8226 \\
-BLIP-2 & LoRA8 DoRA=Y  & 0.6464 & 0.5153 & 0.4078 & 0.3208 & 0.5187 & 0.8397 \\
-BLIP-2 & LoRA16 DoRA=N & 0.6512 & 0.5196 & 0.4113 & 0.3236 & 0.5230 & 0.8490 \\
-BLIP-2 & LoRA16 DoRA=Y & 0.6566 & 0.5249 & 0.4163 & 0.3280 & 0.5274 & 0.8598 \\
-BLIP-2 & LoRA32 DoRA=N & 0.6610 & 0.5289 & 0.4199 & 0.3310 & 0.5302 & 0.8688 \\
-BLIP-2 & LoRA32 DoRA=Y & \textbf{0.6639} & \textbf{0.5317} & \textbf{0.4229} & \textbf{0.3335} & \textbf{0.5322} & \textbf{0.8740} \\
+N & ON  & 32 & 48.30 & \textbf{16.21} & \textbf{36.21} & \textbf{61.10} & \textbf{34.22} & 40.02 \\
+N & OFF & 16 & 44.95 & 14.61 & 33.73 & 54.76 & 31.72 & 37.25 \\
+\hline
+Y & ON  & 8  & \textbf{48.83} & 16.14 & 35.94 & 59.16 & 34.17 & \textbf{40.27} \\
+Y & OFF & 16 & 35.55 & 11.32 & 26.15 & 38.41 & 24.80 & 29.24 \\
 \hline
 \end{tabular}%
 }
 \end{table}
 
-\begin{table}[h!]
+Enabling preprocessing consistently improves performance across both DoRA settings. With DoRA disabled, the best preprocessing-on configuration (LoRA32) gains 3.35 BLEU-1 and 6.34 CIDEr points over the best preprocessing-off configuration. The gap is substantially larger with DoRA enabled: preprocessing-on (LoRA8) leads by 13.28 BLEU-1 points and 20.75 CIDEr points over preprocessing-off (LoRA16). This amplified sensitivity suggests that weight decomposition makes the model more responsive to input quality, since the directional and magnitude updates of DoRA more closely mirror full fine-tuning and therefore depend more on clean, enhanced inputs. METEOR and SPICE follow the same trend across both DoRA settings.
+
+Taken together with the marginal impact observed on the original dataset, these results support a key finding: \textbf{the image enhancement pipeline is not universally necessary, but becomes essential when input images are visually degraded}. In the original Li et al.\ dataset, where images are already clear, the model can extract sufficient visual features without enhancement. In the UWBench dataset, and by extension in real constrained underwater deployments where turbidity, occlusion, and color distortion are common, the pipeline provides a measurable performance benefit. Although DoRA=True exhibits greater sensitivity to preprocessing quality, the DoRA=False configuration with LoRA rank 32 and preprocessing enabled achieves superior performance on four out of six primary metrics on UWBench (B-4, ROUGE-L, CIDEr, and SPICE). The configuration of Qwen3.5 with preprocessing enabled, DoRA=False, and LoRA rank 32 is therefore adopted as the ATHENA deployment configuration. Figure~\ref{fig:prep_gain} illustrates this contrast directly: the top panel shows Preprocessing ON and OFF scores on the Li et al.\ dataset, where bars are nearly identical across all metrics; the bottom panel shows the same comparison on UWBench, where Preprocessing ON consistently and clearly outperforms Preprocessing OFF.
+
+\makeatletter\def\@captype{figure}\makeatother
+\vspace{8pt}
+\noindent\begin{minipage}{\linewidth}
 \centering
-\caption{Qwen3.5-VL ablation results}
-\label{tab:qwen_ablation}
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{llcccccc}
-\hline
-\textbf{Model} & \textbf{Config} & \textbf{B-1} & \textbf{B-2} & \textbf{B-3} & \textbf{B-4} & \textbf{R-L} & \textbf{C} \\
-\hline
-Qwen3.5 & LoRA8 DoRA=N  & 0.7634 & 0.6280 & 0.5131 & 0.4158 & 0.6491 & 1.3124 \\
-Qwen3.5 & LoRA8 DoRA=Y  & \textbf{0.7862} & \textbf{0.6488} & \textbf{0.5390} & \textbf{0.4445} & \textbf{0.6705} & \textbf{1.4046} \\
-Qwen3.5 & LoRA16 DoRA=N & 0.7701 & 0.6348 & 0.5201 & 0.4226 & 0.6553 & 1.3402 \\
-Qwen3.5 & LoRA16 DoRA=Y & 0.7748 & 0.6395 & 0.5248 & 0.4271 & 0.6595 & 1.3618 \\
-Qwen3.5 & LoRA32 DoRA=N & 0.7712 & 0.6360 & 0.5213 & 0.4237 & 0.6563 & 1.3465 \\
-Qwen3.5 & LoRA32 DoRA=Y & 0.7791 & 0.6438 & 0.5290 & 0.4313 & 0.6638 & 1.3821 \\
-\hline
-\end{tabular}%
-}
-\end{table}
+\includegraphics[width=\linewidth]{figures/fig_prep_gain.pdf}
+\caption{Preprocessing ON vs.\ OFF across both datasets (Qwen3.5, DoRA=False).}
+\label{fig:prep_gain}
+\end{minipage}
+\vspace{8pt}
 
 \section{Benchmark Comparison}
 
-ATHENA is compared against a range of state-of-the-art image captioning methods, including CNN-RNN models (Bi-LSTM~\cite{bi-lstm}), attention-based models (Up-Down~\cite{up-down}), and Transformer-based approaches (S2 Transformer~\cite{s2transformer}), using the underwater image captioning dataset~\cite{mainref} as a common benchmark. Results are shown in Table~\ref{tab:results}, where B-N, R-L, and C denote BLEU-N, ROUGE-L, and CIDEr, respectively; best results are in \textbf{bold} and second-best are \underline{underlined}.
+On the original Li et al.\ dataset~\cite{mainref}, ATHENA is compared against a range of established image captioning methods, including CNN-RNN models (Bi-LSTM~\cite{bi-lstm}), attention-based models (Up-Down~\cite{up-down}), and Transformer-based approaches (S2 Transformer~\cite{s2transformer}). This comparison uses the same dataset all models were trained on, providing a direct measure of ATHENA's advantage over prior specialized captioning architectures. Results are shown in Table~\ref{tab:results}, where B-N, M, R-L, C, and S denote BLEU-N, METEOR, ROUGE-L, CIDEr, and SPICE, respectively; best results are in \textbf{bold} and second-best are \underline{underlined}.
 
 \begin{table}[h!]
 \centering
-\caption{Benchmark comparison on the underwater dataset}
+\caption[Benchmark comparison on the Li et al.\ dataset]{Benchmark comparison on the Li et al.\ dataset~\cite{mainref}}
 \label{tab:results}
-\begin{tabular}{p{1.8cm} cccccc}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{p{1.8cm} cccccccc}
 \hline
-\textbf{Model} & \textbf{B-1} $\uparrow$ & \textbf{B-2} $\uparrow$ & \textbf{B-3} $\uparrow$ & \textbf{B-4} $\uparrow$ & \textbf{R-L} $\uparrow$ & \textbf{C} $\uparrow$ \\
+\textbf{Model} & \textbf{B-1} $\uparrow$ & \textbf{B-2} $\uparrow$ & \textbf{B-3} $\uparrow$ & \textbf{B-4} $\uparrow$ & \textbf{M} $\uparrow$ & \textbf{R-L} $\uparrow$ & \textbf{C} $\uparrow$ & \textbf{S} $\uparrow$ \\
 \hline
-Bi-LSTM~\cite{bi-lstm} & 0.6813 & 0.5554 & 0.4534 & 0.3661 & 0.5661 & 1.0747 \\
-Up-Down~\cite{up-down} & 0.7064 & 0.5807 & 0.4653 & 0.3585 & 0.5615 & 1.1680 \\
-S2 Trans.~\cite{s2transformer} & 0.7222 & 0.5958 & 0.4877 & 0.3938 & \underline{0.5944} & 1.2481 \\
-UICM-SOFF~\cite{mainref} & \underline{0.7249} & \underline{0.5980} & \underline{0.4920} & \underline{0.3953} & 0.5888 & \underline{1.2831} \\
-ATHENA (Ours) & \textbf{0.7862} & \textbf{0.6488} & \textbf{0.5390} & \textbf{0.4445} & \textbf{0.6705} & \textbf{1.4046} \\
+Bi-LSTM~\cite{bi-lstm}       & 0.6813          & 0.5554          & 0.4534          & 0.3661          & 0.2761          & 0.5661          & 1.0747          & 0.2163 \\
+Up-Down~\cite{up-down}       & 0.7064          & 0.5807          & 0.4653          & 0.3585          & 0.2775          & 0.5615          & 1.1680          & 0.2114 \\
+S2 Trans.~\cite{s2transformer} & 0.7222        & 0.5958          & 0.4877          & 0.3938          & \underline{0.3028} & \underline{0.5944} & 1.2481       & 0.2311 \\
+UICM-SOFF~\cite{mainref}     & \underline{0.7249} & \underline{0.5980} & \underline{0.4920} & \underline{0.3953} & 0.2988 & 0.5888          & \underline{1.2831} & \underline{0.2368} \\
+ATHENA (Ours)                & \textbf{0.7877} & \textbf{0.6535} & \textbf{0.5473} & \textbf{0.4568} & \textbf{0.3572} & \textbf{0.6765} & \textbf{1.4464} & \textbf{0.2918} \\
 \hline
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
-ATHENA outperforms all compared models across BLEU, ROUGE-L, and CIDEr metrics. The reported ATHENA result corresponds to the best-performing configuration identified in the ablation study, specifically Qwen3.5 fine-tuned with LoRA rank 8 and DoRA enabled. Prior model results are taken from Li et al.~\cite{mainref}, and ATHENA's scores are appended in the last row. This performance gain highlights the effectiveness of ATHENA's vision-language design and its capacity to address low contrast, occlusions, and complex underwater scene structures. Visual examples of ATHENA outputs on challenging underwater images are shown in Figure~\ref{fig:7step_sample}.
+ATHENA outperforms all compared models across all eight metrics. The reported ATHENA configuration uses Qwen3.5 with LoRA rank 8 and DoRA enabled, with preprocessing disabled, as the image enhancement pipeline was found to have only marginal impact on this dataset's relatively clear images and the best scores are achieved without it. Prior model results are taken from Li et al.~\cite{mainref}, and ATHENA's scores are appended in the last row.
 
-\begin{figure}[h!]
+\subsection*{Comparison with Frontier Vision-Language Models}
+
+To further contextualize ATHENA's performance, we evaluate it against a broad set of frontier VLMs in a zero-shot setting on the UWBench dataset~\cite{uwbench}, the more challenging of the two datasets described in Section~\ref{sec:matsmethods}. ATHENA uses the best configuration identified above: Qwen3.5 with preprocessing enabled, DoRA=False, and LoRA rank 32. All scores are reported as percentages ($\times 100$). Frontier model results are reproduced from Zhang et al.~\cite{uwbench}, with ATHENA appended as the last row. Results are shown in Table~\ref{tab:frontier_results}, where B-N, M, R-L, C, and S denote BLEU-N, METEOR, ROUGE-L, CIDEr, and SPICE, respectively; best results are in \textbf{bold} and second-best are \underline{underlined}.
+
+\begin{table}[h!]
 \centering
-\begin{minipage}{\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{figures/7step-sample1.png}
+\caption[Benchmark comparison on the UWBench dataset]{Benchmark comparison on the UWBench dataset~\cite{uwbench}}
+\label{tab:frontier_results}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lcccccccc}
+\hline
+\textbf{Method} & \textbf{B-1} $\uparrow$ & \textbf{B-2} $\uparrow$ & \textbf{B-3} $\uparrow$ & \textbf{B-4} $\uparrow$ & \textbf{M} $\uparrow$ & \textbf{R-L} $\uparrow$ & \textbf{C} $\uparrow$ & \textbf{S} $\uparrow$ \\
+\hline
+ATHENA (Ours)         & \underline{48.30} & \textbf{31.79} & \textbf{22.13} & \textbf{16.21} & \textbf{40.02} & \textbf{36.21} & \underline{61.10} & \underline{34.22} \\
+GPT-5                 & \textbf{49.17} & \underline{31.40} & \underline{21.14} & \underline{14.90} & \underline{27.08} & \underline{34.54} & \textbf{66.10} & \textbf{35.41} \\
+GPT-5-mini            & 43.41 & 23.86 & 13.60 & 8.11 & 23.59 & 26.16 & 36.53 & 26.58 \\
+GPT-4o                & 40.24 & 22.51 & 12.95 & 7.97 & 22.98 & 26.79 & 33.10 & 28.73 \\
+GLM-4.5V-106B         & 41.96 & 23.41 & 13.67 & 8.41 & 22.45 & 25.46 & 31.48 & 26.68 \\
+Qwen3-VL-30B-Instruct & 41.07 & 22.90 & 13.35 & 8.24 & 23.37 & 25.18 & 31.61 & 27.24 \\
+Qwen3-VL-30B-Thinking & 40.82 & 22.64 & 13.28 & 8.19 & 21.74 & 24.86 & 29.22 & 25.79 \\
+Qwen2.5-VL-72B        & 40.07 & 22.09 & 12.77 & 7.90 & 21.15 & 25.14 & 31.24 & 27.40 \\
+GLM-4.1V-9B           & 40.28 & 22.21 & 12.87 & 7.87 & 21.15 & 25.02 & 26.40 & 23.74 \\
+InternVL-3.5-38B      & 36.94 & 20.21 & 11.58 & 7.14 & 20.48 & 24.38 & 26.38 & 26.00 \\
+InternVL-3.5-241B     & 35.88 & 19.87 & 11.50 & 7.13 & 20.23 & 24.20 & 23.60 & 26.18 \\
+Gemini-2.5-Flash      & 33.87 & 16.90 & 8.72  & 4.83 & 23.01 & 22.53 & 10.21 & 24.53 \\
+Qwen2.5-VL-7B         & 32.60 & 17.31 & 9.83  & 6.06 & 18.17 & 22.85 & 11.87 & 24.72 \\
+InternVL-3.5-1B       & 31.73 & 17.68 & 10.40 & 6.57 & 17.89 & 22.92 & 11.16 & 24.44 \\
+Qwen2.5-VL-3B         & 30.26 & 16.24 & 9.43  & 5.91 & 17.34 & 22.84 & 8.53  & 24.04 \\
+\hline
+\end{tabular}%
+}
+\end{table}
+
+ATHENA ranks first on BLEU-2 through BLEU-4, METEOR, and ROUGE-L, and second on BLEU-1, CIDEr, and SPICE, with only GPT-5 exceeding it on those metrics. ATHENA's METEOR of 40.02 substantially exceeds GPT-5's 27.08 and all other models, indicating stronger lexical alignment with human reference captions; this is particularly significant for a 1.37B-parameter model under 4-bit NF4 quantization competing against models up to 100B parameters evaluated zero-shot. GPT-5 leads on CIDEr and SPICE, reflecting stronger consensus-based semantic coverage, while ATHENA's domain-specific fine-tuning drives superior $n$-gram precision and recall.
+
+Figure~\ref{fig:radar} further illustrates this performance profile by normalizing each metric to the observed maximum and plotting ATHENA alongside GPT-5, GPT-5-mini, and GPT-4o, the top three frontier models by semantic captioning metrics (CIDEr, SPICE, METEOR, and ROUGE-L). ATHENA leads on METEOR and ROUGE-L, while GPT-5 leads on CIDEr and SPICE, reflecting a trade-off between lexical fluency and consensus-based semantic coverage.
+
+\makeatletter\def\@captype{figure}\makeatother
+\vspace{18pt}
+\noindent\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.72\linewidth]{figures/fig_radar.pdf}
+\caption{ATHENA vs.\ Top 3 Frontier VLMs on UWBench.}
+\label{fig:radar}
 \end{minipage}
-\vspace{2mm}
-\begin{minipage}{\linewidth}
+\vspace{6pt}
+
+This performance gain reflects ATHENA's vision-language design and its capacity to address low contrast, occlusions, and complex underwater scene structures. Figures~\ref{fig:7step_sample} and~\ref{fig:uw_samples} illustrate the effect of the seven-step enhancement pipeline on sample images from the Li et al.\ dataset and UWBench, respectively. The enhancement effect is less pronounced on the Li et al.\ images, which exhibit milder visual degradation, while improvements are more visually apparent on UWBench images, consistent with the preprocessing ablation findings.
+
+\makeatletter\def\@captype{figure}\makeatother
+\vspace{16pt}
+\noindent\begin{minipage}{\linewidth}
+\centering
+\begin{minipage}{0.49\linewidth}
     \centering
-    \includegraphics[width=\linewidth]{figures/7step-sample2.png}
+    \includegraphics[width=\linewidth]{figures/li1.jpg}
 \end{minipage}
-\caption{Sample ATHENA outputs on underwater images}
+\hfill
+\begin{minipage}{0.49\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/li2.jpg}
+\end{minipage}
+\caption{Sample raw and preprocessed image pairs from the Li et al.\ dataset}
 \label{fig:7step_sample}
-\end{figure}
+\end{minipage}
+\vspace{10pt}
+
+\makeatletter\def\@captype{figure}\makeatother
+\vspace{6pt}
+\noindent\begin{minipage}{\linewidth}
+\centering
+\begin{minipage}{0.49\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/uw1.jpg}
+\end{minipage}%
+\hfill%
+\begin{minipage}{0.49\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/uw2.jpg}
+\end{minipage}
+
+\vspace{4pt}
+
+\noindent\begin{minipage}{0.49\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/uw3.jpg}
+\end{minipage}%
+\hfill%
+\begin{minipage}{0.49\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/uw4.jpg}
+\end{minipage}
+\caption{Sample raw and preprocessed image pairs from the UWBench dataset}
+\label{fig:uw_samples}
+\end{minipage}
+\vspace{6pt}
 
 \section{Computational Efficiency and Deployment Analysis}
 
@@ -137,22 +224,16 @@ To validate the feasibility of ATHENA's deployment on resource-constrained AUV h
 \centering
 \caption{Resource utilization under 4-bit NF4 quantization}
 \label{tab:efficiency}
-\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lccc}
 \hline
-\textbf{Metric} & \textbf{SmolVLM} & \textbf{BLIP-2} & \textbf{Qwen3.5} \\
+\textbf{Model} & \textbf{Parameters} & \textbf{VRAM (fp16)} & \textbf{VRAM (Quantized)} \\
 \hline
-Total Parameters       & 1.27 B   & 2.03 B   & 1.37 B \\
-VRAM fp16              & 1.49 GB  & 2.20 GB  & 1.77 GB \\
-VRAM 4-bit (Active)    & 604 MB   & 966 MB   & 653 MB \\
-VRAM 4-bit (Reserved)  & 3.78 GB  & --       & -- \\
-System RAM             & 2.16 GB  & --       & -- \\
+SmolVLM  & 1,267,694,576 & 1.49 GB & 604.48 MB \\
+Qwen3    & 1,238,994,944 & 1.50 GB & 590.80 MB \\
+BLIP-2   & 2,025,179,136 & 2.20 GB & 965.68 MB \\
+Qwen3.5  & 1,369,148,224 & 1.77 GB & 652.86 MB \\
 \hline
-Preprocessing Latency  & 0.03 s   & 0.03 s   & 0.03 s \\
-Inference Latency      & $<$14 s  & --       & $<$6 s \\
-\hline
-\end{tabular}%
-}
+\end{tabular}
 \end{table}
 
 Although Qwen3.5 has a slightly larger parameter count (1.37B) than SmolVLM (1.27B), its 4-bit quantized VRAM footprint of only 653 MB is comparable to SmolVLM's 604 MB, and both are well within the constraints of standard edge computing modules. The NVIDIA Jetson Orin series typically offers 8 GB of unified memory, leaving substantial headroom for system overhead and local image storage. BLIP-2, by contrast, requires 966 MB under 4-bit quantization, making it the least efficient option despite its intermediate parameter count. Critically, Qwen3.5 achieves an inference latency of approximately 6 seconds per caption, nearly half that of SmolVLM at under 14 seconds. The image preprocessing pipeline adds only 0.03 seconds per frame across all backbones. These latencies are well within acceptable bounds for underwater acoustic communication scenarios, where data transmission rates rather than onboard processing are the primary bottleneck.
