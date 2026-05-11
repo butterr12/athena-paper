@@ -1,6 +1,24 @@
 \prefacesection{Abstract}
 
-Autonomous underwater vehicles (AUVs) are constrained by low-bandwidth acoustic communication channels and limited onboard computation. Current approaches either rely on cloud processing or direct image transmission, both of which are infeasible for untethered AUV operation. In this work, we introduce ATHENA: AI Transformer for Hydro-Environmental Navigation and Analysis, an edge-capable Vision-Language Model (VLM) pipeline that enables AUVs to describe underwater scenes as natural language, supporting efficient acoustic transmission and real-time situational awareness. To address domain-specific visual degradation such as color distortion, light attenuation, and haze, ATHENA applies a multi-step image enhancement pipeline before VLM inference. Through 4-bit NF4 quantization, ATHENA operates within a 653 MB memory footprint, enabling deployment on embedded hardware such as the NVIDIA Jetson Orin series. ATHENA outperforms all prior specialized underwater captioning models on the standard benchmark, and further evaluation on UWBench reveals that the enhancement pipeline is conditionally critical: it produces consistent improvements on visually degraded inputs while being unnecessary for clearer images. Despite using only 1.37 billion parameters, ATHENA surpasses 13 of 14 frontier vision-language models in zero-shot evaluation on UWBench, including GPT-4o and Gemini-2.5-Flash, with particularly strong performance on fluency-based metrics.
+Autonomous underwater vehicles (AUVs) are constrained by low-bandwidth acoustic
+communication channels and limited onboard computation. Current approaches
+either rely on cloud processing or direct image transmission, both of which are
+infeasible for untethered AUV operation. In this work, we introduce ATHENA: AI
+Transformer for Hydro-Environmental Navigation and Analysis, an edge-capable
+Vision-Language Model (VLM) pipeline that enables AUVs to describe underwater
+scenes as natural language, supporting efficient acoustic transmission and
+real-time situational awareness. To address domain-specific visual degradation
+such as color distortion, light attenuation, and haze, ATHENA applies a
+multi-step image enhancement pipeline before VLM inference. Through 4-bit NF4
+quantization, ATHENA operates within a 653 MB memory footprint, enabling
+deployment on embedded hardware such as the NVIDIA Jetson Orin series. ATHENA
+outperforms all prior specialized underwater captioning models on the standard
+benchmark, and further evaluation on UWBench reveals that the enhancement
+pipeline is conditionally critical: it produces consistent improvements on
+visually degraded inputs while being unnecessary for clearer images. Despite
+using only 1.37 billion parameters, ATHENA surpasses 13 of 14 frontier
+vision-language models in zero-shot evaluation on UWBench, including GPT-4o and
+Gemini-2.5-Flash, with particularly strong performance on fluency-based metrics.
 
 % Tips on how to write abstract:
 % https://communities.springernature.com/posts/how-to-write-an-abstract

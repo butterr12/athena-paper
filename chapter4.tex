@@ -236,4 +236,15 @@ Qwen3.5  & 1,369,148,224 & 1.77 GB & 652.86 MB \\
 \end{tabular}
 \end{table}
 
-Although Qwen3.5 has a slightly larger parameter count (1.37B) than SmolVLM (1.27B), its 4-bit quantized VRAM footprint of only 653 MB is comparable to SmolVLM's 604 MB, and both are well within the constraints of standard edge computing modules. The NVIDIA Jetson Orin series typically offers 8 GB of unified memory, leaving substantial headroom for system overhead and local image storage. BLIP-2, by contrast, requires 966 MB under 4-bit quantization, making it the least efficient option despite its intermediate parameter count. Critically, Qwen3.5 achieves an inference latency of approximately 6 seconds per caption, nearly half that of SmolVLM at under 14 seconds. The image preprocessing pipeline adds only 0.03 seconds per frame across all backbones. These latencies are well within acceptable bounds for underwater acoustic communication scenarios, where data transmission rates rather than onboard processing are the primary bottleneck.
+Although Qwen3.5 has a slightly larger parameter count (1.37B) than SmolVLM
+(1.27B), its 4-bit quantized VRAM footprint of only 653 MB is comparable to
+SmolVLM's 604 MB, and both are well within the constraints of standard edge
+computing modules. The NVIDIA Jetson Orin series typically offers 8 GB of
+unified memory, leaving substantial headroom for system overhead and local image
+storage. BLIP-2, by contrast, requires 966 MB under 4-bit quantization, making
+it the least efficient option despite its intermediate parameter count.
+Critically, Qwen3.5 achieves an inference latency of approximately 30 seconds per
+caption. The image preprocessing pipeline adds only 0.03 seconds per frame across all backbones.
+These latencies are well within acceptable bounds for underwater acoustic
+communication scenarios, where data transmission rates rather than onboard
+processing are the primary bottleneck.

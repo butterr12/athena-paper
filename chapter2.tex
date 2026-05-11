@@ -46,13 +46,24 @@ Underwater image captioning is hindered by three challenges: models pre-trained 
 
 This dataset serves as the primary training and evaluation benchmark for ATHENA, and UICM-SOFF's scores (BLEU-1: 0.7249, BLEU-4: 0.3953, ROUGE-L: 0.5888, CIDEr: 1.2831) define the state-of-the-art baseline against which ATHENA's results are directly compared.
 
-\section[W. Chen, Xu, H. Chen, X. Zhang, Qin, Y. Zhang \& Han]{Semantic Communication Based on Large Language Model for Underwater Image Transmission~\cite{chen1}}
-An LLM-based semantic communication framework for underwater image transmission represents image content as compact semantic information rather than pixel data, reducing transmitted data to approximately 0.8\% of the original image size. The semantic encoder passes the image to a visual LLM to generate text encoding high-level content, identifies key image regions via bounding box prediction at reduced resolution, and aggressively resamples the remaining background; the combined payload is approximately 27,525 bytes versus the original 3,145,728 bytes. At the receiver, a diffusion model reconstructs the full image from three guidance signals conditioned on the recovered text and key regions. Evaluation on the SUIM dataset shows the highest CLIP scores across all tested SNR levels (0--18 dB).
+\section[W. Chen, Xu, H. Chen, X. Zhang, Qin, Y. Zhang \& Han]{Semantic
+Communication Based on Large Language Model for Underwater Image
+Transmission~\cite{chen1}} An LLM-based semantic communication framework for
+underwater image transmission represents image content as compact semantic
+information rather than pixel data, reducing transmitted data to approximately
+0.8\% of the original image size. The semantic encoder passes the image to a
+visual LLM to generate text encoding high-level content, identifies key image
+regions via bounding box prediction at reduced resolution, and aggressively
+resamples the remaining background; the combined payload is approximately 27,525
+bytes versus the original 3,145,728 bytes. At the receiver, a diffusion model
+reconstructs the full image from three guidance signals conditioned on the
+recovered text and key regions. Evaluation on the Semantic Segmentation of Underwater Imagery (SUIM) dataset shows the highest
+CLIP scores across all tested Signal-to-Noise Ratio (SNR) levels (0--18 dB).
 
 Both this framework and ATHENA share the core insight that language-based representations serve as an effective acoustic communication payload to overcome the fundamental bandwidth limitations of underwater channels.
 
 \section[Zhang et al.]{An Underwater Acoustic Semantic Communication Approach to Underwater Image Transmission~\cite{zhang3}}
-This work proposes an acoustic semantic communication framework that extracts semantic features from underwater images using deep neural networks and encodes them for delivery over bandwidth-limited, high-latency acoustic channels. Semantic encoding separates task-relevant content from perceptually redundant detail, achieving significant bandwidth savings while maintaining downstream task performance under challenging acoustic conditions.
+This work proposed an acoustic semantic communication framework that extracts semantic features from underwater images using deep neural networks and encodes them for delivery over bandwidth-limited, high-latency acoustic channels. Semantic encoding separates task-relevant content from perceptually redundant detail, achieving significant bandwidth savings while maintaining downstream task performance under challenging acoustic conditions.
 
 These findings reinforce the practical viability of semantic representations for AUV communication and provide quantitative support for ATHENA's design choice to transmit VLM-generated captions rather than compressed images over acoustic channels.
 

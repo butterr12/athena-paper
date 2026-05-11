@@ -4,11 +4,18 @@ This chapter describes the data, methodology, and experimental setup used to dev
 \section{Data}
 \subsection*{Underwater Image Captioning Dataset (Li et al.)}
 
-For our study, we first use a publicly available underwater image captioning dataset collected by Li et al. \cite{mainref}, which consists of 3,176 high-quality underwater images. We selected this dataset because it is the most comprehensive publicly available underwater dataset with multiple human-written captions per image. Other popular underwater datasets, such as UIEB \cite{uieb}, SQUID \cite{squid}, UID2021 \cite{uid}, URPC2021 \cite{urpc}, and DUO \cite{duo}, either lack captions, focus solely on object detection, or are much smaller in scale.
+For our study, we used a publicly available underwater image captioning
+dataset collected by Li et al. \cite{mainref}, which consists of 3,176
+high-quality underwater images. We selected this dataset because it is the most
+comprehensive publicly available underwater dataset with multiple human-written
+captions per image. Other popular underwater datasets, such as UIEB \cite{uieb},
+SQUID \cite{squid}, UID2021 \cite{uid}, URPC2021 \cite{urpc}, and DUO
+\cite{duo}, either lack captions, focus solely on object detection, or are much
+smaller in scale.
 
 The images cover a wide range of resolutions and were resized to 224 × 224 pixels for consistency and ease of use. The dataset includes diverse underwater scenes, such as small distant targets, dense groups, visual blur, and low-light conditions, representing real-world underwater environments. The dataset also spans ten categories, predominantly fish (1861), coral reefs (1587), and divers (850).
 
-Each image is annotated with five distinct captions provided by volunteers with domain expertise, resulting in a total of 15,880 captions. These captions, created as part of the original research, describe object morphology, color, quantity, motion, and additional scene context, ensuring rich vocabulary and syntactic diversity. Table~\ref{tab:examples}, reproduced from Li et al.~\cite{mainref}, presents some representative examples from the dataset.  The dataset provides a comprehensive benchmark for underwater scene understanding and forms the foundation for training and evaluating our vision-language model.
+Each image was annotated with five distinct captions provided by volunteers with domain expertise, resulting in a total of 15,880 captions. These captions, created as part of the original research, describe object morphology, color, quantity, motion, and additional scene context, ensuring rich vocabulary and syntactic diversity. Table~\ref{tab:examples}, reproduced from Li et al.~\cite{mainref}, presents some representative examples from the dataset.  The dataset provides a comprehensive benchmark for underwater scene understanding and forms the foundation for training and evaluating our vision-language model.
 
 \begin{table}[h!]
 \centering
